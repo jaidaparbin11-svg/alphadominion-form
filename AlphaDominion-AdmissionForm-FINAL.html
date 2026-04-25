@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alpha Dominion — Admission Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8C97A;
+      --gold-dim:   rgba(201,168,76,0.12);
+      --bg:         #080808;
+      --surface:    #0F0F0F;
+      --surface2:   #141414;
+      --border:     rgba(201,168,76,0.22);
+      --text:       #EDE5CE;
+      --muted:      #6B6350;
+      --success:    #4CAF82;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px 96px;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+    .page { width: 100%; max-width: 640px; position: relative; z-index: 1; }
+
+    .fade-item { opacity: 0; transform: translateY(24px); animation: fadeUp 0.7s ease forwards; }
+    .fade-item:nth-child(1) { animation-delay: 0.1s; }
+    .fade-item:nth-child(2) { animation-delay: 0.25s; }
+    .fade-item:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold-dim); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 14px 6px 10px;
+      margin-bottom: 28px; font-size: 11px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+    /* ── Header ── */
+    .header { text-align: center; margin-bottom: 48px; }
+    .logo { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .logo-ring { position: relative; width: 72px; height: 72px; }
+    .logo-ring svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: rotate 12s linear infinite; }
+    .logo-ring svg.icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 32px; height: 32px; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(34px,7vw,54px); font-weight: 700; line-height: 1.05; margin-bottom: 6px; }
+    h1 em { font-style: italic; color: var(--gold); }
+    .brand-name { font-size: 11px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
+    .header-sub { font-size: 14.5px; color: var(--muted); line-height: 1.65; max-width: 380px; margin: 0 auto; font-weight: 300; }
+    .stats { display: flex; justify-content: center; gap: 40px; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--border); }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--gold-light); display: block; }
+    .stat-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── Card ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; position: relative; }
+    .card-top-bar { height: 3px; background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-light) 60%, transparent 100%); }
+    .card-body { padding: 40px 40px 48px; }
+    @media(max-width:520px){ .card-body{padding:28px 20px 36px;} }
+
+    /* ── Section Head ── */
+    .section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; margin-top: 40px; }
+    .section-head:first-of-type { margin-top: 0; }
+    .section-icon { width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--gold-dim); }
+    .section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 18px; }
+    .field label { display: flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 500; letter-spacing: 0.05em; color: #857A65; text-transform: uppercase; margin-bottom: 8px; }
+    .req { color: var(--gold); font-size: 13px; line-height: 1; }
+    .field input,.field select,.field textarea {
+      width: 100%; background: var(--surface2); border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 10px; padding: 13px 16px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; color: var(--text);
+      outline: none; appearance: none; -webkit-appearance: none;
+      transition: border-color .25s, box-shadow .25s, background .25s;
+    }
+    .field input::placeholder,.field textarea::placeholder { color: #3D3830; }
+    .field input:focus,.field select:focus,.field textarea:focus {
+      border-color: rgba(201,168,76,0.6); box-shadow: 0 0 0 4px rgba(201,168,76,0.08); background: #161616;
+    }
+    .field textarea { resize: vertical; min-height: 90px; line-height: 1.55; }
+    .sel-wrap { position: relative; }
+    .sel-wrap::after { content:''; position:absolute; right:15px; top:50%; transform:translateY(-50%); border-left:4px solid transparent; border-right:4px solid transparent; border-top:5px solid var(--gold); pointer-events:none; }
+    .sel-wrap select { padding-right: 38px; cursor: pointer; }
+    .sel-wrap select option { background: #1a1a1a; color: var(--text); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media(max-width:460px){ .row-2{grid-template-columns:1fr;} }
+
+    /* ── Pills ── */
+    .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill-group input[type="checkbox"] { display: none; }
+    .pill-group label { display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px; border: 1px solid rgba(201,168,76,0.18); border-radius: 100px; font-size: 12.5px; color: var(--muted); cursor: pointer; transition: all .2s; text-transform: none; letter-spacing: 0; font-weight: 400; background: transparent; }
+    .pill-group input:checked + label { border-color: var(--gold); background: var(--gold-dim); color: var(--gold-light); }
+    .pill-group label:hover { border-color: rgba(201,168,76,0.45); color: var(--text); }
+
+    /* ── Progress ── */
+    .progress-bar { height: 2px; background: var(--border); border-radius: 2px; margin-bottom: 32px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; width: 0%; transition: width .4s ease; }
+
+    /* ── Submit ── */
+    .submit-wrap { margin-top: 40px; }
+    .submit-btn {
+      width: 100%; padding: 17px 24px; background: var(--gold); border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: #080808; cursor: pointer;
+      position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s;
+    }
+    .submit-btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent 0%,rgba(255,255,255,0.15) 50%,transparent 100%); transform:translateX(-100%); transition:transform .5s; }
+    .submit-btn:hover::before { transform:translateX(100%); }
+    .submit-btn:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(201,168,76,0.3); }
+    .submit-btn:active { transform:translateY(0); }
+    .submit-btn:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .spinner { display:inline-block; width:15px; height:15px; border:2px solid rgba(8,8,8,0.3); border-top-color:#080808; border-radius:50%; animation:spin .65s linear infinite; vertical-align:middle; margin-right:8px; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    .error-banner { display:none; align-items:center; gap:10px; background:rgba(220,50,50,0.08); border:1px solid rgba(220,50,50,0.25); border-radius:10px; padding:13px 16px; margin-top:16px; font-size:13px; color:#FF7070; }
+
+    /* ── Success ── */
+    .success-screen { display:none; text-align:center; padding:64px 32px 56px; animation:fadeUp .6s ease; }
+    .success-circle { width:80px; height:80px; border-radius:50%; border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; margin:0 auto 28px; position:relative; }
+    .success-circle::before { content:''; position:absolute; inset:-8px; border-radius:50%; border:1px solid rgba(201,168,76,0.2); }
+    .success-screen h2 { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; margin-bottom:12px; }
+    .success-screen p { font-size:14px; color:var(--muted); line-height:1.7; max-width:340px; margin:0 auto; }
+    .success-screen p strong { color:var(--gold-light); }
+    .success-tag { display:inline-block; margin-top:28px; padding:8px 18px; background:rgba(76,175,130,0.1); border:1px solid rgba(76,175,130,0.3); border-radius:100px; font-size:12px; color:var(--success); letter-spacing:.08em; }
+
+    /* ── Footer ── */
+    .footer { text-align:center; margin-top:28px; font-size:12px; color:#3D3830; line-height:1.7; }
+    .footer a { color:rgba(201,168,76,0.6); text-decoration:none; }
+    .footer a:hover { color:var(--gold); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header fade-item">
+    <div class="badge"><span class="badge-dot"></span>Accepting Students</div>
+    <div class="logo">
+      <div class="logo-ring">
+        <svg class="ring" viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="33" stroke="#C9A84C" stroke-width="1" stroke-dasharray="4 6" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon" viewBox="0 0 32 32" fill="none">
+          <polygon points="16,3 29,25 3,25" stroke="#C9A84C" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+          <line x1="16" y1="10" x2="16" y2="19" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="16" cy="22" r="1.3" fill="#C9A84C"/>
+        </svg>
+      </div>
+      <span class="brand-name">Alpha Dominion</span>
+    </div>
+    <h1>Apply for<br/><em>Mentorship</em></h1>
+    <br/>
+    <p class="header-sub">Fill in your details below. Every serious trader starts with a single decision — this is yours.</p>
+    <div class="stats">
+      <div class="stat"><span class="stat-num">100+</span><span class="stat-label">Students</span></div>
+      <div class="stat"><span class="stat-num">SMC</span><span class="stat-label">Strategy</span></div>
+      <div class="stat"><span class="stat-num">Live</span><span class="stat-label">Mentorship</span></div>
+    </div>
+  </div>
+
+  <!-- Card -->
+  <div class="card fade-item">
+    <div class="card-top-bar"></div>
+    <div class="card-body">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+      <form id="admissionForm">
+
+        <!-- Hidden Web3Forms key -->
+        <input type="hidden" name="access_key" value="2375099a-68d4-472d-b7fb-452f7a009233"/>
+        <input type="hidden" name="subject" value="🔔 New Alpha Dominion Admission Application"/>
+        <input type="hidden" name="from_name" value="Alpha Dominion Form"/>
+        <input type="checkbox" name="botcheck" style="display:none"/>
+
+        <!-- Section 1 -->
+        <div class="section-head">
+          <div class="section-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="5" r="3" stroke="#C9A84C" stroke-width="1.3"/>
+              <path d="M2 13.5c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="section-title">Personal Info</span>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" name="Full Name" placeholder="Your full name" required/>
+          </div>
+          <div class="field">
+            <label>Age <span class="req">*</span></label>
+            <input type="number" name="Age" placeholder="e.g. 22" min="15" max="65" required/>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>WhatsApp Number <span class="req">*</span></label>
+            <input type="tel" name="WhatsApp Number" placeholder="+91 XXXXX XXXXX" required/>
+          </div>
+          <div class="field">
+            <label>Email Address <span class="req">*</span></label>
+            <input type="email" name="email" placeholder="you@email.com" required/>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>City <span class="req">*</span></label>
+            <input type="text" name="City" placeholder="Your city" required/>
+          </div>
+          <div class="field">
+            <label>State</label>
+            <input type="text" name="State" placeholder="Your state"/>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section-head">
+          <div class="section-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <polyline points="1,11 5,7 8,9 11,5 15,3" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="11,3 15,3 15,7" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="section-title">Trading Background</span>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="field">
+          <label>Current Experience Level <span class="req">*</span></label>
+          <div class="sel-wrap">
+            <select name="Experience Level" required>
+              <option value="" disabled selected>Select your level</option>
+              <option>Beginner — No experience yet</option>
+              <option>Novice — Less than 6 months</option>
+              <option>Intermediate — 6 months to 2 years</option>
+              <option>Experienced — 2+ years</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Markets You Want to Trade</label>
+          <div class="pill-group">
+            <input type="checkbox" id="m1" name="Markets" value="Forex"/><label for="m1">📈 Forex</label>
+            <input type="checkbox" id="m2" name="Markets" value="Crypto"/><label for="m2">₿ Crypto</label>
+            <input type="checkbox" id="m3" name="Markets" value="Indices"/><label for="m3">📊 Indices</label>
+            <input type="checkbox" id="m4" name="Markets" value="Commodities"/><label for="m4">🏅 Commodities</label>
+            <input type="checkbox" id="m5" name="Markets" value="Stocks"/><label for="m5">🏦 Stocks</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Primary Goal <span class="req">*</span></label>
+          <div class="sel-wrap">
+            <select name="Primary Goal" required>
+              <option value="" disabled selected>What do you want to achieve?</option>
+              <option>Get Funded — Pass a Prop Firm Challenge</option>
+              <option>Build Consistent Income from Trading</option>
+              <option>Learn SMC / Price Action Concepts</option>
+              <option>Quit 9-to-5 &amp; Trade Full-Time</option>
+              <option>Earn a Side Income While Working</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="section-head">
+          <div class="section-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6.5" stroke="#C9A84C" stroke-width="1.3"/>
+              <line x1="8" y1="7" x2="8" y2="11" stroke="#C9A84C" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="8" cy="5" r="0.8" fill="#C9A84C"/>
+            </svg>
+          </div>
+          <span class="section-title">A Bit More</span>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Occupation</label>
+            <input type="text" name="Occupation" placeholder="Student / Job / Business"/>
+          </div>
+          <div class="field">
+            <label>How Did You Find Us? <span class="req">*</span></label>
+            <div class="sel-wrap">
+              <select name="Heard Via" required>
+                <option value="" disabled selected>Select source</option>
+                <option>Instagram</option>
+                <option>YouTube</option>
+                <option>WhatsApp</option>
+                <option>Referral / Friend</option>
+                <option>Telegram</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Your Message / Questions</label>
+          <textarea name="Message" placeholder="Tell us about your current challenges, goals, or any questions about the mentorship..."></textarea>
+        </div>
+
+        <div class="submit-wrap">
+          <button type="submit" class="submit-btn" id="submitBtn">Submit My Application</button>
+          <div class="error-banner" id="errorBanner">
+            <span>⚠</span>
+            <span id="errorText">Something went wrong. Please try again or contact us on WhatsApp.</span>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Success -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-circle">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <polyline points="7,16 13,22 25,10" stroke="#C9A84C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2>Welcome, Trader.</h2>
+        <p>Your application has been received. We'll reach out on <strong>WhatsApp within 24 hours</strong> to discuss your next steps.</p>
+        <span class="success-tag">✓ Application Submitted Successfully</span>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="footer fade-item">
+    By submitting, you agree to be contacted by Alpha Dominion regarding your enquiry.<br/>
+    Questions? <a href="https://wa.me/91XXXXXXXXXX">WhatsApp Us</a>
+  </p>
+
+</div>
+
+<script>
+  // Progress bar
+  const form = document.getElementById('admissionForm');
+  const progressFill = document.getElementById('progressFill');
+  const requiredFields = form.querySelectorAll('[required]');
+
+  function updateProgress() {
+    const filled = [...requiredFields].filter(f => f.value.trim() !== '').length;
+    progressFill.style.width = Math.round((filled / requiredFields.length) * 100) + '%';
+  }
+  form.addEventListener('input', updateProgress);
+  form.addEventListener('change', updateProgress);
+
+  // Submit via Web3Forms
+  const submitBtn = document.getElementById('submitBtn');
+  const errorBanner = document.getElementById('errorBanner');
+  const errorText = document.getElementById('errorText');
+  const successScreen = document.getElementById('successScreen');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    errorBanner.style.display = 'none';
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+    const formData = new FormData(form);
+
+    // Collect all checked market checkboxes into a single string
+    const markets = [...document.querySelectorAll('input[name="Markets"]:checked')]
+      .map(cb => cb.value).join(', ') || 'Not selected';
+
+    // Remove individual checkbox entries, add combined string
+    formData.delete('Markets');
+    formData.append('Markets Selected', markets);
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        progressFill.style.width = '100%';
+        form.style.display = 'none';
+        successScreen.style.display = 'block';
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      errorText.textContent = err.message || 'Something went wrong. Please try again.';
+      errorBanner.style.display = 'flex';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Submit My Application';
+    }
+  });
+</script>
+</body>
+</html>
